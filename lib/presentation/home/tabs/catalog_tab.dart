@@ -116,80 +116,71 @@ class CatalogTab extends StatelessWidget {
               // Simple and fast animated appear
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0, end: 1),
-                  duration: Duration(milliseconds: 200 + itemIndex * 19),
-                  curve: Curves.easeOut,
-                  builder: (context, value, child) => Transform.translate(
-                    offset: Offset(0, (1 - value) * 18),
-                    child: Opacity(opacity: value, child: child!),
-                  ),
-                  child: GlassCard(
-                    onTap: () => openProductDetailFlyout(
-                      context,
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                        ),
-                        child: Consumer(
-                          builder: (context, ref, _) => ProductDetailFlyout(
-                            medicine: m,
-                            ref: ref,
-                          ),
+                child: GlassCard(
+                  onTap: () => openProductDetailFlyout(
+                    context,
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: Consumer(
+                        builder: (context, ref, _) => ProductDetailFlyout(
+                          medicine: m,
+                          ref: ref,
                         ),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: CachedNetworkImage(
-                            imageUrl: m.imageUrl ?? '',
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: m.imageUrl ?? '',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey[300],
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/images/placeholder_medicine.png',
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              width: 80,
-                              height: 80,
-                              color: Colors.grey[300],
-                            ),
-                            errorWidget: (context, url, error) => Image.asset(
-                              'assets/images/placeholder_medicine.png',
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(m.name,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium),
-                              const SizedBox(height: 4),
-                              Text(m.kind,
-                                  style:
-                                      Theme.of(context).textTheme.bodySmall),
-                              const SizedBox(height: 6),
-                              Text('₹${m.price.toStringAsFixed(2)}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall),
-                              if (!m.inStock)
-                                Text('Out of stock',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .error)),
-                            ],
-                          ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(m.name,
+                                style:
+                                    Theme.of(context).textTheme.titleMedium),
+                            const SizedBox(height: 4),
+                            Text(m.kind,
+                                style:
+                                    Theme.of(context).textTheme.bodySmall),
+                            const SizedBox(height: 6),
+                            Text('₹${m.price.toStringAsFixed(2)}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall),
+                            if (!m.inStock)
+                              Text('Out of stock',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .error)),
+                          ],
                         ),
-                        const Icon(Icons.chevron_right),
-                      ],
-                    ),
+                      ),
+                      const Icon(Icons.chevron_right),
+                    ],
                   ),
                 ),
               );

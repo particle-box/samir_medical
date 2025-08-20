@@ -161,7 +161,7 @@ class _BarItem extends StatelessWidget {
                           Shadow(
                             color: color.withOpacity(0.44),
                             blurRadius: 7,
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                           )
                         ]
                       : null,

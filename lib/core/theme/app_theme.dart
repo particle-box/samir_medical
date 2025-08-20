@@ -21,7 +21,7 @@ class AppTheme {
     );
     return base.copyWith(
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: Colors.transparent, // <<<< CHANGED
+      scaffoldBackgroundColor: _bgLight, // <<<< CHANGED
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: Colors.white.withOpacity(0.6),
@@ -87,7 +87,7 @@ class AppTheme {
     );
     return base.copyWith(
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: Colors.transparent, // <<<< CHANGED
+      scaffoldBackgroundColor: _bgDark, // <<<< CHANGED
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: Colors.white.withOpacity(0.06),

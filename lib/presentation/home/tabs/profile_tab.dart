@@ -15,17 +15,17 @@ class ProfileTab extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 28,
-                child: Text('S', style: Theme.of(context).textTheme.titleLarge),
+                child: Text('A', style: Theme.of(context).textTheme.titleLarge),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Suryadip Sarkar',
+                    Text('John Doe',
                         style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
-                    Text('suryadip.2008@gmail.com',
+                    Text('john.doe@example.com',
                         style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),

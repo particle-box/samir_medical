@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
-  bool _showLoading = false;
 
   final _pages = const [
     CatalogTab(),
@@ -24,18 +23,11 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   final _titles = const ['Catalog', 'Doctors', 'Cart', 'Profile'];
 
-  void _onTabTapped(int newIndex) async {
+  void _onTabTapped(int newIndex) {
     if (newIndex == _index) return;
     setState(() {
-      _showLoading = true;
       _index = newIndex;
     });
-    await Future.delayed(const Duration(milliseconds: 480)); // ~0.5s modern flash
-    if (mounted) {
-      setState(() {
-        _showLoading = false;
-      });
-    }
   }
 
   @override
@@ -52,15 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       extendBody: true,
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: _index,
-            children: _pages,
-          ),
-          if (_showLoading)
-            const LoadingBarFlash(duration: Duration(milliseconds: 480)),
-        ],
+      body: IndexedStack(
+        index: _index,
+        children: _pages,
       ),
       bottomNavigationBar: GlassBottomBar(
         currentIndex: _index,
