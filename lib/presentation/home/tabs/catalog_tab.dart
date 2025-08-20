@@ -26,7 +26,7 @@ void openProductDetailFlyout(BuildContext context, Widget flyoutContent) {
               begin: const Offset(0, 1),
               end: Offset.zero,
             ).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutQuart)),
+              CurvedAnimation(parent: animation, curve: Curves.easeOutQuart)),
             child: flyoutContent,
           ),
         ),
@@ -38,16 +38,17 @@ void openProductDetailFlyout(BuildContext context, Widget flyoutContent) {
 
 class CatalogTab extends StatelessWidget {
   const CatalogTab({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final st = ref.watch(catalogViewModelProvider);
         final vm = ref.read(catalogViewModelProvider.notifier);
+        final sorts = const ['Tablet', 'Syrup', 'Capsule', 'Injection', 'Other'];
         final topPadding = MediaQuery.of(context).padding.top + AppTheme.appBarHeight;
 
-        if (st.isLoading && st.items.isEmpty) {
+        // Show full-screen shimmer only on the very first load
+        if (st.isLoading && st.items.isEmpty && !st.hasLoadedOnce) {
           return const ListShimmer();
         }
 
@@ -72,19 +73,26 @@ class CatalogTab extends StatelessWidget {
                   onSelected: (_) => vm.selectKind(null),
                 ),
                 const SizedBox(width: 8),
-                ...vm.kinds.map((k) => Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: FilterChip(
-                        label: Text(k),
-                        selected: st.selectedKind == k,
-                        onSelected: (_) => vm.selectKind(
-                            st.selectedKind == k ? null : k),
-                      ),
-                    )),
+                ...sorts.map((k) => Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    label: Text(k),
+                    selected: st.selectedKind == k,
+                    onSelected: (_) => vm.selectKind(k),
+                  ),
+                )),
               ],
             ),
           ),
+
+          // Small inline loader during subsequent loads (prevents "blank" flash)
+          if (st.isLoading && st.hasLoadedOnce) ...[
+            const SizedBox(height: 8),
+            const LinearProgressIndicator(minHeight: 3),
+          ],
+
           const SizedBox(height: 12),
+
           if (st.error != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -93,7 +101,7 @@ class CatalogTab extends StatelessWidget {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          if (st.items.isEmpty)
+          if (!st.isLoading && st.items.isEmpty)
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(24.0),
@@ -111,15 +119,12 @@ class CatalogTab extends StatelessWidget {
               if (index == 0) {
                 return SizedBox(height: topPadding - 32.0);
               }
-
               final adjustedIndex = index - 1;
               if (adjustedIndex < headerWidgets.length) {
                 return headerWidgets[adjustedIndex];
               }
-
               final itemIndex = adjustedIndex - headerWidgets.length;
               final m = st.items[itemIndex];
-
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: GlassCard(
@@ -148,7 +153,7 @@ class CatalogTab extends StatelessWidget {
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Shimmer.fromColors(
                             baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
+                            highlightColor: Colors.grey!,
                             child: Container(
                               width: 80,
                               height: 80,
@@ -169,23 +174,23 @@ class CatalogTab extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(m.name,
-                                style:
-                                    Theme.of(context).textTheme.titleMedium),
+                              style:
+                              Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 4),
                             Text(m.kind,
-                                style:
-                                    Theme.of(context).textTheme.bodySmall),
+                              style:
+                              Theme.of(context).textTheme.bodySmall),
                             const SizedBox(height: 6),
                             Text('₹${m.price.toStringAsFixed(2)}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall),
                             if (!m.inStock)
                               Text('Out of stock',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .error)),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .error)),
                           ],
                         ),
                       ),

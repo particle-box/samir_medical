@@ -3,33 +3,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samir_medical/domain/entities/medicine.dart';
 import 'package:samir_medical/domain/repositories/catalog_repository.dart';
 
+// Sentinel used to distinguish "not provided" from "explicitly set to null"
+const _unset = Object();
+
 class CatalogState {
   final bool isLoading;
   final List<Medicine> items;
   final String? selectedKind;
   final String? searchQuery;
   final String? error;
+  final bool hasLoadedOnce;
+
   const CatalogState({
     this.isLoading = false,
     this.items = const [],
     this.selectedKind,
     this.searchQuery,
     this.error,
+    this.hasLoadedOnce = false,
   });
 
   CatalogState copyWith({
     bool? isLoading,
     List<Medicine>? items,
-    String? selectedKind,
-    String? searchQuery,
-    String? error,
+    Object? selectedKind = _unset,
+    Object? searchQuery = _unset,
+    Object? error = _unset,
+    bool? hasLoadedOnce,
   }) {
     return CatalogState(
       isLoading: isLoading ?? this.isLoading,
       items: items ?? this.items,
-      selectedKind: selectedKind ?? this.selectedKind,
-      searchQuery: searchQuery ?? this.searchQuery,
-      error: error,
+      selectedKind: identical(selectedKind, _unset)
+          ? this.selectedKind
+          : selectedKind as String?,
+      searchQuery: identical(searchQuery, _unset)
+          ? this.searchQuery
+          : searchQuery as String?,
+      error: identical(error, _unset) ? this.error : error as String?,
+      hasLoadedOnce: hasLoadedOnce ?? this.hasLoadedOnce,
     );
   }
 }
@@ -44,28 +56,42 @@ class CatalogViewModel extends StateNotifier<CatalogState> {
   final TextEditingController searchController = TextEditingController();
 
   Future<void> load() async {
+    // Preserve filters; mark loading
     state = state.copyWith(isLoading: true, error: null);
     try {
       final list = await _repo.getCatalog(
         search: state.searchQuery,
         kind: state.selectedKind,
       );
-      state = state.copyWith(items: list, isLoading: false);
+      state = state.copyWith(
+        items: list,
+        isLoading: false,
+        error: null,
+        hasLoadedOnce: true,
+      );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'Failed to load catalog');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to load catalog',
+        hasLoadedOnce: true,
+      );
     }
   }
 
   Future<void> refresh() => load();
 
   Future<void> search(String? q) async {
-    state = state.copyWith(searchQuery: q?.trim().isEmpty == true ? null : q?.trim());
+    state = state.copyWith(
+      searchQuery: (q?.trim().isEmpty == true) ? null : q?.trim(),
+    );
     await load();
   }
 
   Future<void> selectKind(String? k) async {
-    state = state.copyWith(selectedKind: k);
-    await load();
+    if (state.selectedKind != k) {
+      state = state.copyWith(selectedKind: k);
+      await load();
+    }
   }
 
   @override
@@ -76,4 +102,6 @@ class CatalogViewModel extends StateNotifier<CatalogState> {
 }
 
 final catalogViewModelProvider =
-    StateNotifierProvider<CatalogViewModel, CatalogState>((ref) => CatalogViewModel());
+    StateNotifierProvider<CatalogViewModel, CatalogState>(
+  (ref) => CatalogViewModel(),
+);
