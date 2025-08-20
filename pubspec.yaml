@@ -1,0 +1,79 @@
+name: samir_medical
+description: Samir Medical - Medicines, Doctors, Appointments, Cart & PayKun checkout.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.7.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.5.1
+  shared_preferences: ^2.2.2
+  animations: ^2.0.11
+  cached_network_image: ^3.3.1
+
+  # Routing
+  go_router: ^16.1.0
+
+  # HTTP
+  dio: ^5.5.0+1
+
+  # JSON/Models
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Storage & cache
+  flutter_secure_storage: ^10.0.0-beta.4
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.3
+
+  # UI & Motion
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  transparent_image: ^2.0.1
+
+  # Images & files
+  image_picker: ^1.1.2
+  file_picker: ^10.2.4
+  permission_handler: ^12.0.1
+
+  # Maps (MapLibre GL open source)
+  #maplibre_gl: ^0.22.0
+  #geolocator: ^14.0.2
+
+  # Notifications
+  flutter_local_notifications: ^19.4.0
+
+  # Form & misc
+  intl: ^0.20.2
+  url_launcher: ^6.3.0
+  collection: ^1.18.0
+
+  # For platform channels (payment SDK stubs)
+  plugin_platform_interface: ^2.1.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  freezed: ^3.1.0
+  build_runner: ^2.4.11
+  json_serializable: ^6.8.0
+  mockito: ^5.4.4
+  riverpod_test: ^0.1.5
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/placeholder_medicine.png
+    - assets/images/placeholder_doctor.png
+    - assets/images/logo.png
+    - assets/images/onboarding_1.png
+    - assets/images/onboarding_2.png
