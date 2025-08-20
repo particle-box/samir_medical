@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:samir_medical/core/theme/app_theme.dart';
 import 'package:samir_medical/presentation/catalog/catalog_viewmodel.dart';
 import 'package:samir_medical/presentation/common/widgets/glass_card.dart';
 import 'package:samir_medical/presentation/common/widgets/shimmer.dart';
@@ -44,12 +45,12 @@ class CatalogTab extends StatelessWidget {
       builder: (context, ref, _) {
         final st = ref.watch(catalogViewModelProvider);
         final vm = ref.read(catalogViewModelProvider.notifier);
+        final topPadding = MediaQuery.of(context).padding.top + AppTheme.appBarHeight;
 
         if (st.isLoading && st.items.isEmpty) {
           return const ListShimmer();
         }
 
-        // Prebaked header area for search/filter, no rebuilds unless listings update
         final headerWidgets = <Widget>[
           TextField(
             controller: vm.searchController,
@@ -101,20 +102,24 @@ class CatalogTab extends StatelessWidget {
             ),
         ];
 
-        // Total items: header + product cards
         return RefreshIndicator(
           onRefresh: vm.refresh,
           child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
-            itemCount: headerWidgets.length + st.items.length,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+            itemCount: headerWidgets.length + st.items.length + 1,
             itemBuilder: (context, index) {
-              if (index < headerWidgets.length) {
-                return headerWidgets[index];
+              if (index == 0) {
+                return SizedBox(height: topPadding - 32.0);
               }
-              final itemIndex = index - headerWidgets.length;
+
+              final adjustedIndex = index - 1;
+              if (adjustedIndex < headerWidgets.length) {
+                return headerWidgets[adjustedIndex];
+              }
+
+              final itemIndex = adjustedIndex - headerWidgets.length;
               final m = st.items[itemIndex];
 
-              // Simple and fast animated appear
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: GlassCard(

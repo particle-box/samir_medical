@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:samir_medical/core/theme/app_theme.dart';
 import 'package:samir_medical/presentation/cart/cart_state.dart';
 import 'package:samir_medical/presentation/common/widgets/glass_card.dart';
 import 'package:samir_medical/presentation/cart/checkout_address_screen.dart';
@@ -30,15 +31,25 @@ class _CartTabState extends ConsumerState<CartTab> {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top + AppTheme.appBarHeight;
     final items = ref.watch(cartStateProvider);
     final cart = ref.read(cartStateProvider.notifier);
 
     double total = items.fold(0.0, (sum, item) => sum + item.medicine.price * item.quantity);
 
+    Widget buildPaddedScreen(Widget child) {
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [
+          SizedBox(height: topPadding - 32.0),
+          child,
+        ],
+      );
+    }
+
     if (_step == 1) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: CheckoutAddressScreen(
+      return buildPaddedScreen(
+        CheckoutAddressScreen(
           onNext: (name, address, phone) {
             setState(() {
               _name = name;
@@ -52,9 +63,8 @@ class _CartTabState extends ConsumerState<CartTab> {
     }
 
     if (_step == 2 && _name != null && _address != null && _phone != null) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: CheckoutReviewScreen(
+      return buildPaddedScreen(
+        CheckoutReviewScreen(
           name: _name!,
           address: _address!,
           phone: _phone!,
@@ -83,8 +93,9 @@ class _CartTabState extends ConsumerState<CartTab> {
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
       children: [
+        SizedBox(height: topPadding - 32.0),
         ...items.map((it) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: GlassCard(

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static const double appBarHeight = 44.0;
+
   // Base brand colors (muted blues/greys with vibrant accents)
   static const Color _primary = Color(0xFF3A7BD5); // blue accent
   static const Color _secondary = Color(0xFF00D2FF); // cyan accent

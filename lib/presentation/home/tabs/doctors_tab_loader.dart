@@ -31,20 +31,30 @@ class _DoctorsTabLoaderState extends State<DoctorsTabLoader> {
       // THE FIX: Replaced Center with Align to move the animation up.
       return Align(
         alignment: const Alignment(0.0, -0.3), // Adjust this value to move it up or down
-        child: Lottie.asset(
-          // Make sure you are using the .json file that works
-          'assets/lottie/doctor_loader.json',
-          width: 400,
-          height: 400,
-          delegates: LottieDelegates(
-            values: [
-              // This delegate finds any layer named "Background" and makes it transparent
-              ValueDelegate.color(
-                const ['Background', '**'],
-                value: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(
+              // Make sure you are using the .json file that works
+              'assets/lottie/doctor_loader.json',
+              width: 400,
+              height: 400,
+              delegates: LottieDelegates(
+                values: [
+                  // This delegate finds any layer named "Background" and makes it transparent
+                  ValueDelegate.color(
+                    const ['Background', '**'],
+                    value: Colors.transparent,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Gathering available information...',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ],
         ),
       );
     } else {

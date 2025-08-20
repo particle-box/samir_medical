@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:samir_medical/core/theme/app_theme.dart';
 import 'package:samir_medical/presentation/common/widgets/glass_card.dart';
 
 class DoctorsTab extends StatelessWidget {
@@ -7,6 +8,7 @@ class DoctorsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top + AppTheme.appBarHeight;
     final doctors = const [
       ('d1', 'Dr. A. Sen', 'Cardiologist'),
       ('d2', 'Dr. P. Sharma', 'Dermatologist'),
@@ -15,11 +17,15 @@ class DoctorsTab extends StatelessWidget {
     ];
 
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: doctors.length,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+      itemCount: doctors.length + 1,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
-        final (id, name, spec) = doctors[i];
+        if (i == 0) {
+          return SizedBox(height: topPadding - 32.0);
+        }
+        final index = i - 1;
+        final (id, name, spec) = doctors[index];
         return GlassCard(
           onTap: () => context.push('/doctor/$id'),
           child: Row(

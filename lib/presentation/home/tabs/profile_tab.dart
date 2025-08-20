@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:samir_medical/core/theme/app_theme.dart';
 import 'package:samir_medical/presentation/common/widgets/glass_card.dart';
 
 class ProfileTab extends StatelessWidget {
@@ -7,9 +8,11 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top + AppTheme.appBarHeight;
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
       children: [
+        SizedBox(height: topPadding - 32.0),
         GlassCard(
           child: Row(
             children: [
