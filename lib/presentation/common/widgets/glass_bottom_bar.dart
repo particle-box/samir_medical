@@ -97,7 +97,7 @@ class GlassBottomBar extends StatelessWidget {
   }
 }
 
-class _BarItem extends StatelessWidget {
+class _BarItem extends StatefulWidget {
   final IconData icon;
   final String label;
   final bool selected;
@@ -115,10 +115,59 @@ class _BarItem extends StatelessWidget {
   });
 
   @override
+  __BarItemState createState() => __BarItemState();
+}
+
+class __BarItemState extends State<_BarItem> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.9), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.15), weight: 50),
+    ]).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    if (widget.selected) {
+      _controller.value = 1.0;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _BarItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selected != oldWidget.selected) {
+      if (widget.selected) {
+        _controller.forward(from: 0.0);
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final color = selected ? activeColor : inactiveColor;
-    final fontWeight = selected ? FontWeight.w900 : FontWeight.w700;
-    final shadow = selected
+    final color = widget.selected ? widget.activeColor : widget.inactiveColor;
+    final fontWeight = widget.selected ? FontWeight.w900 : FontWeight.w700;
+    final shadow = widget.selected
         ? [
             Shadow(
               color: Colors.black.withOpacity(0.3),
@@ -129,7 +178,7 @@ class _BarItem extends StatelessWidget {
         : null;
 
     return InkWell(
-      onTap: onTap,
+      onTap: widget.onTap,
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
@@ -138,34 +187,26 @@ class _BarItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          color: selected ? color.withOpacity(0.13) : Colors.transparent,
+          color: widget.selected ? color.withOpacity(0.13) : Colors.transparent,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TweenAnimationBuilder<double>(
-              tween: Tween<double>(
-                begin: 1.0,
-                end: selected ? 1.24 : 1.0,
-              ),
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOutBack,
-              builder: (context, scale, child) => Transform.scale(
-                scale: scale,
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 26,
-                  shadows: selected
-                      ? [
-                          Shadow(
-                            color: color.withOpacity(0.44),
-                            blurRadius: 7,
-                            offset: const Offset(0, 4),
-                          )
-                        ]
-                      : null,
-                ),
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: Icon(
+                widget.icon,
+                color: color,
+                size: 26,
+                shadows: widget.selected
+                    ? [
+                        Shadow(
+                          color: color.withOpacity(0.44),
+                          blurRadius: 7,
+                          offset: const Offset(0, 4),
+                        )
+                      ]
+                    : null,
               ),
             ),
             const SizedBox(height: 5),
@@ -181,7 +222,7 @@ class _BarItem extends StatelessWidget {
                 shadows: shadow,
               ),
               child: Text(
-                label,
+                widget.label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

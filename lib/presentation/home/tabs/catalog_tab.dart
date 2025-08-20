@@ -5,6 +5,7 @@ import 'package:samir_medical/presentation/common/widgets/glass_card.dart';
 import 'package:samir_medical/presentation/common/widgets/shimmer.dart';
 import 'package:samir_medical/presentation/catalog/product_detail_flyout.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 // ---- Flyout Helper ----
 void openProductDetailFlyout(BuildContext context, Widget flyoutContent) {
@@ -140,10 +141,14 @@ class CatalogTab extends StatelessWidget {
                           width: 80,
                           height: 80,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            width: 80,
-                            height: 80,
-                            color: Colors.grey[300],
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.white,
+                            ),
                           ),
                           errorWidget: (context, url, error) => Image.asset(
                             'assets/images/placeholder_medicine.png',
